@@ -1,5 +1,8 @@
+# Environment variables
 .env
-venv
-/playwright-report/
-/playwright-report/*
-playwright-report/**/*
+
+# Python virtual environment
+venv/
+
+# Playwright browser profile
+playwright-nexus-profile/

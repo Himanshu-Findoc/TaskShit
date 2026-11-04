@@ -1,12 +1,9 @@
 PROJECTS = [
-    "/Users/himanshu/Documents/Findost/findost_be",
-    "/Users/himanshu/Documents/Findost/findost_fe",
-    "/Users/himanshu/Documents/Findost/findost_r_fe",
-    "/Users/himanshu/Documents/Findost/wealth_r_fe",
-    "/Users/himanshu/Documents/Findost/wealth_fe",
+    "/Users/vishal/Development/finzoom_fe/finzoom_fe",
+    "/Users/vishal/Development/finzoom_be/wealth_be",
 ]
 
-COMMITS_LIMIT = 5
+COMMITS_LIMIT = 20
 
 NEXUS_BOARD_URL = (
     "https://nexus.findoc.com/spaces/"
@@ -15,7 +12,7 @@ NEXUS_BOARD_URL = (
 
 # repo -> sprint name shown in the Nexus "Sprint" dropdown
 PROJECT_SPRINT_MAP = {
-    "findost_be":   "FinDost Features",
+    "finzoom_fe":   "FinDost Features",
     "findost_fe":   "FinDost Features",
     "findost_r_fe": "FinDost Features",
     "wealth_r_fe":  "FinZoom Live",
@@ -26,7 +23,7 @@ PROJECT_SPRINT_MAP = {
 WORK_TYPE = "task"
 STATUS    = "Done"   # matched by visible label
 PRIORITY  = "medium"
-ASSIGNEE  = "Himanshu Swami"
+ASSIGNEE  = "Vishal Yadav"
 REPORTER  = "Amit Gayar"
 
 # Task category -> (summary prefix, repo-name filter)

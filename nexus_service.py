@@ -65,11 +65,17 @@ def set_status(page, modal):
         return  # already Done
     btn.click()
     page.wait_for_timeout(400)
-    page.locator(
-        f"xpath=//*[(self::button or @role='option' or @role='menuitem' or self::li)"
-        f" and normalize-space(.)='{STATUS}']"
-    ).last.click()
+    # Menu items may be div/span/etc. Match any visible element with exact text.
+    option = page.get_by_text(STATUS, exact=True).locator("visible=true")
+    try:
+        option.last.click(timeout=5000)
+    except Exception:
+        # Fallback: keyboard navigation inside the opened dropdown
+        page.keyboard.type(STATUS, delay=50)
+        page.keyboard.press("Enter")
     page.wait_for_timeout(300)
+    if btn.inner_text().strip().lower() != STATUS.lower():
+        print(f"⚠️  Status may not be set (shows '{btn.inner_text().strip()}')")
 
 
 # =====================================
@@ -161,7 +167,7 @@ def submit_task(title, description, selected_commits, labels, date_iso,
     with sync_playwright() as p:
         browser = p.chromium.launch_persistent_context(
             user_data_dir=BROWSER_PROFILE, headless=False,
-            executable_path="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
+            executable_path="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
         )
         page = browser.pages[0] if browser.pages else browser.new_page()
 
