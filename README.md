@@ -86,7 +86,7 @@ Or run it directly: `./venv/bin/python app.py`
 4. Choose where to upload. For the sprint sheet, also enter hours and a start time (`H:MM AM/PM`).
 5. Review and edit the AI summary and description, then confirm.
 
-The browsers open, fill the forms and submit by themselves. On the first run, log in by hand if asked, and approve Microsoft MFA on your phone (the script waits up to 2 minutes). After that, logins are remembered.
+Browsers run in the background (`HEADLESS = True` in `config.py`) and fill and submit the forms by themselves. On the first run, log in by hand if asked, and approve Microsoft MFA on your phone (the script waits up to 2 minutes). After that, logins are remembered.
 
 ## Configuration (`config.py`)
 
@@ -122,6 +122,7 @@ helpers.py              # Commit sorting
 |---|---|
 | `Executable doesn't exist ... ms-playwright` | `./venv/bin/python -m playwright install firefox chromium` |
 | `nexus: command not found` | Open a new terminal or run `rehash`; check that `~/.local/bin` is on your `PATH` |
+| Login needed / debugging | Set `HEADLESS = False` in `config.py` to watch the browser |
 | Nexus step fails | Check the screenshot in `nexus_error.png`. The Nexus UI may have changed. |
 | Sprint sheet form doesn't load | Check `sprintsheet_error.png`. Log in or approve MFA in the Firefox window. |
 | Profile already in use | Close any other app using the same Firefox/Brave profile |

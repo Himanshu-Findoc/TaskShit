@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
 
 from config import (
+    HEADLESS,
     NEXUS_BOARD_URL, PROJECT_SPRINT_MAP,
     WORK_TYPE, STATUS, PRIORITY, ASSIGNEE, REPORTER,
 )
@@ -160,7 +161,7 @@ def submit_task(title, description, selected_commits, labels, date_iso,
 
     with sync_playwright() as p:
         browser = p.chromium.launch_persistent_context(
-            user_data_dir=BROWSER_PROFILE, headless=False,
+            user_data_dir=BROWSER_PROFILE, headless=HEADLESS,
             executable_path="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
         )
         page = browser.pages[0] if browser.pages else browser.new_page()

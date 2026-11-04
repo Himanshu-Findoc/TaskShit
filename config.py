@@ -53,3 +53,6 @@ PROJECT_PRODUCT_MAP = {
     "wealth_r_fe":  "Finzoom",
     "wealth_fe":    "Finzoom",
 }
+
+# Run browsers in the background (set False to watch / for first-time login)
+HEADLESS = True

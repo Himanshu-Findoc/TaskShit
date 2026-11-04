@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
 
-from config import SPRINTSHEET_URL, SPRINTSHEET_PROFILE, PROJECT_PRODUCT_MAP, ASSIGNEE
+from config import HEADLESS, SPRINTSHEET_URL, SPRINTSHEET_PROFILE, PROJECT_PRODUCT_MAP, ASSIGNEE
 
 load_dotenv()
 
@@ -56,6 +56,9 @@ def microsoft_login(page):
         ).or_(page.locator("#idRichContext_DisplaySign"))
 
         if mfa_prompt.count() > 0:
+            sign = page.locator("#idRichContext_DisplaySign")
+            if sign.count() > 0:
+                print(f"🔢 Enter this number in Authenticator: {sign.inner_text().strip()}")
             print(
                 "📱 Waiting for Microsoft Authenticator approval on your "
                 "phone..."
@@ -310,7 +313,7 @@ def submit_sprintsheet(title, description, selected_commits, estimated_hours,
 
     with sync_playwright() as p:
         browser = p.firefox.launch_persistent_context(
-            user_data_dir=SPRINTSHEET_PROFILE, headless=False,
+            user_data_dir=SPRINTSHEET_PROFILE, headless=HEADLESS,
         )
         page = browser.pages[0] if browser.pages else browser.new_page()
         try:
