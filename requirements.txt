@@ -1,0 +1,7 @@
+gitpython
+groq
+playwright
+python-dotenv
+questionary
+rich
+pyfiglet
