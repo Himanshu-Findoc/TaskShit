@@ -55,4 +55,4 @@ PROJECT_PRODUCT_MAP = {
 }
 
 # Run browsers in the background (set False to watch / for first-time login)
-HEADLESS = True
+HEADLESS = False

@@ -55,7 +55,15 @@ def microsoft_login(page):
             "text=Approve sign in request"
         ).or_(page.locator("#idRichContext_DisplaySign"))
 
-        if mfa_prompt.count() > 0:
+        # The MFA page can render a few seconds after the password submit,
+        # so wait briefly for it rather than checking count() once.
+        try:
+            mfa_prompt.first.wait_for(state="visible", timeout=10000)
+            mfa_shown = True
+        except Exception:
+            mfa_shown = False
+
+        if mfa_shown:
             sign = page.locator("#idRichContext_DisplaySign")
             if sign.count() > 0:
                 print(f"🔢 Enter this number in Authenticator: {sign.inner_text().strip()}")

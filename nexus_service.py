@@ -58,10 +58,12 @@ def pick_suggestion(page, input_box, name):
 
 def set_status(page, modal):
     """Status is a custom dropdown button (not a <select>). Ensure it shows STATUS."""
-    btn = field(modal, "Status").locator("button").first
-    if btn.count() == 0:  # fallback: old <select> UI
-        field(modal, "Status").locator("select").select_option(label=STATUS)
+    sel = field(modal, "Status").locator("select")
+    if sel.count() > 0:  # current UI: native <select> beside the badge
+        sel.first.select_option(label=STATUS)
+        page.wait_for_timeout(300)
         return
+    btn = field(modal, "Status").locator("button").first
     if btn.inner_text().strip().lower() == STATUS.lower():
         return  # already Done
     btn.click()
