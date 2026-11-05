@@ -1,3 +1,5 @@
+import os
+
 PROJECTS = [
     "/Users/himanshu/Documents/Findost/findost_be",
     "/Users/himanshu/Documents/Findost/findost_fe",
@@ -43,8 +45,8 @@ LABEL_OPTIONS = ["feature", "bug", "improvement", "urgent", "documentation"]
 SPRINTSHEET_URL = (
     "https://findocm365.sharepoint.com/sites/devretail/_layouts/15/listforms.aspx?cid=MWNkYTJkNWYtZDliYi00ZmY5LWFmMjgtNWU5MTc3NDU4NjVk&ct=1784550481857&or=Teams-HL&nav=YzQ3Mjc4ZDMtMzdiNy00YmFlLWExY2QtMGFkOGQ2MTYyODBj&LOF=1"
 )
-# Reuses task_updater's Firefox profile so the Microsoft login session carries over
-SPRINTSHEET_PROFILE = "/Users/himanshu/Documents/personal projects/task_updater/playwright-firefox-profile"
+# Firefox profile (inside this project) that keeps the Microsoft login session
+SPRINTSHEET_PROFILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "playwright-firefox-profile")
 
 PROJECT_PRODUCT_MAP = {
     "findost_be":   "Findost",
@@ -55,4 +57,4 @@ PROJECT_PRODUCT_MAP = {
 }
 
 # Run browsers in the background (set False to watch / for first-time login)
-HEADLESS = False
+HEADLESS = True

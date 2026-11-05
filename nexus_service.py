@@ -58,10 +58,31 @@ def pick_suggestion(page, input_box, name):
 
 def set_status(page, modal):
     """Status is a custom dropdown button (not a <select>). Ensure it shows STATUS."""
-    sel = field(modal, "Status").locator("select")
-    if sel.count() > 0:  # current UI: native <select> beside the badge
-        sel.first.select_option(label=STATUS)
+    # Current UI: native <select> with options todo/in_progress/in_review/done/blocked.
+    # Locate it by its options rather than the label wrapper, which is unreliable.
+    sel = modal.locator("xpath=.//select[option[@value='in_progress'] and option[@value='done']]")
+    if sel.count() == 0:
+        sel = field(modal, "Status").locator("select")
+    if sel.count() > 0:
+        s = sel.first
+        s.scroll_into_view_if_needed()
+        s.select_option(label=STATUS)
         page.wait_for_timeout(300)
+        chosen = s.evaluate("e => e.options[e.selectedIndex].text").strip()
+        if chosen.lower() != STATUS.lower():
+            # React-controlled select ignored it: set via native setter + events
+            s.evaluate(
+                """(e, label) => {
+                    const opt = [...e.options].find(o => o.text.trim().toLowerCase() === label.toLowerCase());
+                    const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set;
+                    setter.call(e, opt.value);
+                    e.dispatchEvent(new Event('input', {bubbles: true}));
+                    e.dispatchEvent(new Event('change', {bubbles: true}));
+                }""",
+                STATUS,
+            )
+            page.wait_for_timeout(300)
+        print(f"   Status → {s.evaluate('e => e.options[e.selectedIndex].text')}")
         return
     btn = field(modal, "Status").locator("button").first
     if btn.inner_text().strip().lower() == STATUS.lower():

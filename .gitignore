@@ -3,3 +3,4 @@ venv
 /playwright-nexus-profile/*
 /playwright-nexus-profile/*
 playwright-nexus-profile/**/*
+/playwright-firefox-profile/
