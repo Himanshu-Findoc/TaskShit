@@ -113,8 +113,35 @@ def nexus_login(page):
     pwd.first.fill(PASSWORD)
     pwd.first.press("Enter")
 
-    page.wait_for_url("**/board**", timeout=60000)
+    # After login, Nexus shows an app chooser (OneSpace / Nexus) or the board
+    page.wait_for_function(
+        """() => location.href.includes('/board') ||
+                 document.body.innerText.includes('Empowering seamless teamwork')""",
+        timeout=60000,
+    )
     print("✅ Login Success")
+
+
+def open_nexus_app(page):
+    """On the OneSpace / Nexus chooser page, click the Nexus 'Open' button."""
+    if "/board" in page.url:
+        return
+    open_btns = page.locator("button, a").filter(has_text="Open")
+    try:
+        open_btns.first.wait_for(state="visible", timeout=10000)
+    except Exception:
+        return  # no chooser shown
+
+    # Innermost container holding the Nexus tagline + an Open button
+    nexus_panel = page.locator("div").filter(
+        has_text="Empowering seamless teamwork"
+    ).filter(has=open_btns).last
+    btn = nexus_panel.locator("button, a").filter(has_text="Open")
+    if btn.count() == 0:
+        btn = open_btns.last  # Nexus panel is on the right
+    print("🚀 Opening Nexus (Collaboration Development)...")
+    btn.first.click()
+    page.wait_for_load_state("networkidle")
 
 
 # =====================================
@@ -193,6 +220,7 @@ def submit_task(title, description, selected_commits, labels, date_iso,
             page.goto(NEXUS_BOARD_URL)
             page.wait_for_load_state("networkidle")
             nexus_login(page)
+            open_nexus_app(page)
             if "/board" not in page.url:
                 page.goto(NEXUS_BOARD_URL)
             page.get_by_role("button", name="Create").first.wait_for(timeout=30000)
