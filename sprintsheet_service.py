@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
 
-from config import HEADLESS, SPRINTSHEET_URL, SPRINTSHEET_PROFILE, PROJECT_PRODUCT_MAP, ASSIGNEE
+from config import HEADLESS, SPRINTSHEET_URL, SPRINTSHEET_PROFILE, PROJECT_PRODUCT_MAP, ASSIGNEE, BRAVE_PATH
 
 load_dotenv()
 
@@ -18,29 +18,6 @@ PRODUCT_RADIOS = {
     "Accord":  "ChoiceGroup14-Other",
     "MTF":     "ChoiceGroup14-Utility",
 }
-
-
-def ensure_profile(profile_dir):
-    """Make sure the Firefox profile exists and points at its own location.
-
-    Firefox stores the profile's absolute path in pkcs11.txt. If the profile
-    folder is moved/renamed, that stale path makes Firefox fail with
-    "Your Firefox profile cannot be loaded". Rewrite it to the current path.
-    """
-    import re
-
-    os.makedirs(profile_dir, exist_ok=True)
-    pkcs11 = os.path.join(profile_dir, "pkcs11.txt")
-    if not os.path.exists(pkcs11):
-        return
-    with open(pkcs11, encoding="utf-8") as f:
-        text = f.read()
-    fixed = re.sub(r"configdir='sql:[^']*'",
-                   lambda _: f"configdir='sql:{profile_dir}'", text)
-    if fixed != text:
-        with open(pkcs11, "w", encoding="utf-8") as f:
-            f.write(fixed)
-        print("🔧 Fixed stale path in Firefox profile (pkcs11.txt)")
 
 
 def get_product(selected_commits):
@@ -105,7 +82,7 @@ def microsoft_login(page):
 
         # ---- "Stay signed in?" (KMSI) ----
         # Clicking "Yes" here is what persists the session cookie in the
-        # Firefox profile so future runs can skip email/password. Target it
+        # browser profile so future runs can skip email/password. Target it
         # explicitly instead of a blind submit click, and give the page a
         # moment to actually render before looking for it.
         page.wait_for_timeout(1500)
@@ -342,11 +319,10 @@ def submit_sprintsheet(title, description, selected_commits, estimated_hours,
     product = product or get_product(selected_commits)
     success = False
 
-    ensure_profile(SPRINTSHEET_PROFILE)
-
     with sync_playwright() as p:
-        browser = p.firefox.launch_persistent_context(
+        browser = p.chromium.launch_persistent_context(
             user_data_dir=SPRINTSHEET_PROFILE, headless=HEADLESS,
+            executable_path=BRAVE_PATH,
         )
         page = browser.pages[0] if browser.pages else browser.new_page()
         try:

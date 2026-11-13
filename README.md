@@ -24,7 +24,7 @@ A terminal tool that turns your **git commits** (or a **meeting agenda**) into a
 
 - macOS (the paths in `config.py` assume it)
 - Python 3.9+
-- [Brave Browser](https://brave.com/) (opens Nexus)
+- [Brave Browser](https://brave.com/) (opens Nexus and the sprint sheet)
 - A Groq API key: https://console.groq.com/keys
 - Local clones of the repos listed in `config.py`
 
@@ -38,8 +38,8 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-# 2. Install the browsers Playwright uses (Firefox opens the sprint sheet)
-python -m playwright install firefox chromium
+# 2. Install Playwright's browser drivers
+python -m playwright install chromium
 
 # 3. Set up your credentials
 cp .env.example .env
@@ -100,7 +100,7 @@ Browsers run in the background (`HEADLESS = True` in `config.py`) and fill and s
 | `CATEGORIES`          | Task types, prefixes and repo filters                |
 | `LABEL_OPTIONS`       | Labels shown in the checklist                        |
 | `SPRINTSHEET_URL`     | SharePoint sprint sheet form                         |
-| `SPRINTSHEET_PROFILE` | Firefox profile that keeps the Microsoft login       |
+| `SPRINTSHEET_PROFILE` | Brave profile that keeps the Microsoft login         |
 | `PROJECT_PRODUCT_MAP` | Repo → sprint sheet Product (Findost / Finzoom)      |
 
 ## Project structure
@@ -110,7 +110,7 @@ app.py                  # CLI flow (prompts, orchestration)
 ai_service.py           # Groq: title/description for commits & meetings
 git_service.py          # Reads commits from local repos
 nexus_service.py        # Playwright automation for Nexus (Brave)
-sprintsheet_service.py  # Playwright automation for SharePoint (Firefox)
+sprintsheet_service.py  # Playwright automation for SharePoint (Brave)
 config.py               # All settings
 helpers.py              # Commit sorting
 .env.example            # Credentials template
@@ -120,12 +120,12 @@ helpers.py              # Commit sorting
 
 | Problem | Fix |
 |---|---|
-| `Executable doesn't exist ... ms-playwright` | `./venv/bin/python -m playwright install firefox chromium` |
+| `Executable doesn't exist ... ms-playwright` | `./venv/bin/python -m playwright install chromium` |
 | `nexus: command not found` | Open a new terminal or run `rehash`; check that `~/.local/bin` is on your `PATH` |
 | Login needed / debugging | Set `HEADLESS = False` in `config.py` to watch the browser |
 | Nexus step fails | Check the screenshot in `nexus_error.png`. The Nexus UI may have changed. |
-| Sprint sheet form doesn't load | Check `sprintsheet_error.png`. Log in or approve MFA in the Firefox window. |
-| Profile already in use | Close any other app using the same Firefox/Brave profile |
+| Sprint sheet form doesn't load | Check `sprintsheet_error.png`. Log in or approve MFA in the Brave window. |
+| Profile already in use | Close any other app using the same Brave profile |
 | AI fails | Check `GROQ_API_KEY`. The tool falls back to the commit message or agenda. |
 
 ## Security

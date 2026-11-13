@@ -45,8 +45,11 @@ LABEL_OPTIONS = ["feature", "bug", "improvement", "urgent", "documentation"]
 SPRINTSHEET_URL = (
     "https://findocm365.sharepoint.com/sites/devretail/_layouts/15/listforms.aspx?cid=MWNkYTJkNWYtZDliYi00ZmY5LWFmMjgtNWU5MTc3NDU4NjVk&ct=1784550481857&or=Teams-HL&nav=YzQ3Mjc4ZDMtMzdiNy00YmFlLWExY2QtMGFkOGQ2MTYyODBj&LOF=1"
 )
-# Firefox profile (inside this project) that keeps the Microsoft login session
-SPRINTSHEET_PROFILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "playwright-firefox-profile")
+# Brave profile (inside this project) that keeps the Microsoft login session
+SPRINTSHEET_PROFILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "playwright-sprint-profile")
+
+# Browser used for both Nexus and the sprint sheet
+BRAVE_PATH = "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
 
 PROJECT_PRODUCT_MAP = {
     "findost_be":   "Findost",
