@@ -20,6 +20,29 @@ PRODUCT_RADIOS = {
 }
 
 
+def ensure_profile(profile_dir):
+    """Make sure the Firefox profile exists and points at its own location.
+
+    Firefox stores the profile's absolute path in pkcs11.txt. If the profile
+    folder is moved/renamed, that stale path makes Firefox fail with
+    "Your Firefox profile cannot be loaded". Rewrite it to the current path.
+    """
+    import re
+
+    os.makedirs(profile_dir, exist_ok=True)
+    pkcs11 = os.path.join(profile_dir, "pkcs11.txt")
+    if not os.path.exists(pkcs11):
+        return
+    with open(pkcs11, encoding="utf-8") as f:
+        text = f.read()
+    fixed = re.sub(r"configdir='sql:[^']*'",
+                   lambda _: f"configdir='sql:{profile_dir}'", text)
+    if fixed != text:
+        with open(pkcs11, "w", encoding="utf-8") as f:
+            f.write(fixed)
+        print("🔧 Fixed stale path in Firefox profile (pkcs11.txt)")
+
+
 def get_product(selected_commits):
     for c in selected_commits:
         if c["repo"] in PROJECT_PRODUCT_MAP:
@@ -318,6 +341,8 @@ def submit_sprintsheet(title, description, selected_commits, estimated_hours,
     """Fill and submit the sprint sheet form. start_date 'M/D/YYYY', start_time 'H:MM AM'."""
     product = product or get_product(selected_commits)
     success = False
+
+    ensure_profile(SPRINTSHEET_PROFILE)
 
     with sync_playwright() as p:
         browser = p.firefox.launch_persistent_context(
