@@ -12,7 +12,7 @@ COMMITS_LIMIT = 5
 
 NEXUS_BOARD_URL = (
     "https://nexus.findoc.com/spaces/"
-    "f90ad832-3453-4f10-92f4-e7b7882e7b00/board"
+    "6e7ee940-118e-4a8c-b83c-b73c98194303/board"
 )
 
 # repo -> sprint name shown in the Nexus "Sprint" dropdown
@@ -29,7 +29,7 @@ WORK_TYPE = "task"
 STATUS    = "Done"   # matched by visible label
 PRIORITY  = "medium"
 ASSIGNEE  = "Himanshu Swami"
-REPORTER  = "Amit Gayar"
+REPORTER  = "Vishal Yadav"
 
 # Task category -> (summary prefix, repo-name filter)
 CATEGORIES = {

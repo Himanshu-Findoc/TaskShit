@@ -9,6 +9,8 @@ from config import (
     WORK_TYPE, STATUS, PRIORITY, ASSIGNEE, REPORTER,
 )
 
+from helpers import close_browser
+
 load_dotenv()
 
 EMAIL    = os.getenv("NEXUS_EMAIL") or os.getenv("SHAREPOINT_EMAIL")
@@ -190,8 +192,13 @@ def fill_form(page, title, description, labels, date_iso, sprint):
     print(f"✅ Start/Due date -> {date_iso}")
 
     if sprint:
-        field(modal, "Sprint").locator("select").select_option(label=sprint)
-        print(f"✅ Sprint -> {sprint}")
+        sprint_select = field(modal, "Sprint").locator("select")
+        options = [o.strip() for o in sprint_select.locator("option").all_inner_texts()]
+        if sprint in options:
+            sprint_select.select_option(label=sprint)
+            print(f"✅ Sprint -> {sprint}")
+        else:
+            print(f"⚠️  Sprint '{sprint}' not in this space — skipped")
 
     # Reporter
     pick_suggestion(page, field(modal, "Reporter").locator("input"), REPORTER)
@@ -242,6 +249,6 @@ def submit_task(title, description, selected_commits, labels, date_iso,
             print(f"❌ Error: {e}  (screenshot: nexus_error.png)")
 
         finally:
-            browser.close()
+            close_browser(browser, BROWSER_PROFILE)
 
     return success

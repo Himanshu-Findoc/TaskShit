@@ -6,6 +6,8 @@ from playwright.sync_api import sync_playwright
 
 from config import HEADLESS, SPRINTSHEET_URL, SPRINTSHEET_PROFILE, PROJECT_PRODUCT_MAP, ASSIGNEE, BRAVE_PATH
 
+from helpers import close_browser
+
 load_dotenv()
 
 EMAIL    = os.getenv("SHAREPOINT_EMAIL")
@@ -352,8 +354,5 @@ def submit_sprintsheet(title, description, selected_commits, estimated_hours,
         except Exception as e:
             print(f"❌ Sprint sheet error: {e}")
         finally:
-            try:
-                browser.close()
-            except Exception:
-                pass
+            close_browser(browser, SPRINTSHEET_PROFILE)
     return success
