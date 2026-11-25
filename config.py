@@ -8,7 +8,7 @@ PROJECTS = [
     "/Users/himanshu/Documents/Findost/wealth_fe",
 ]
 
-COMMITS_LIMIT = 5
+COMMITS_LIMIT = 10
 
 NEXUS_BOARD_URL = (
     "https://nexus.findoc.com/spaces/"
