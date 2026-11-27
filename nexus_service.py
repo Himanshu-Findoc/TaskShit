@@ -6,7 +6,7 @@ from playwright.sync_api import sync_playwright
 from config import (
     HEADLESS, BRAVE_PATH,
     NEXUS_BOARD_URL, PROJECT_SPRINT_MAP,
-    WORK_TYPE, STATUS, PRIORITY, ASSIGNEE, REPORTER,
+    STATUS, PRIORITY, ASSIGNEE, REPORTER,
 )
 
 from helpers import close_browser
@@ -150,7 +150,7 @@ def open_nexus_app(page):
 # FILL FORM
 # =====================================
 
-def fill_form(page, title, description, labels, date_iso, sprint):
+def fill_form(page, title, description, labels, date_iso, sprint, work_type):
     page.get_by_role("button", name="Create").first.click()
 
     modal = page.locator(
@@ -158,10 +158,10 @@ def fill_form(page, title, description, labels, date_iso, sprint):
     )
     modal.wait_for(state="visible", timeout=15000)
 
-    field(modal, "Work Type").locator("select").select_option(WORK_TYPE)
+    field(modal, "Work Type").locator("select").select_option(work_type)
     set_status(page, modal)
     field(modal, "Priority").locator("select").select_option(PRIORITY)
-    print("✅ Work type / Status / Priority set")
+    print(f"✅ Work type ({work_type}) / Status / Priority set")
 
     field(modal, "Summary").locator("input").fill(title)
     field(modal, "Description").locator("textarea").fill(description)
@@ -212,7 +212,7 @@ def fill_form(page, title, description, labels, date_iso, sprint):
 # =====================================
 
 def submit_task(title, description, selected_commits, labels, date_iso,
-                sprint=None) -> bool:
+                sprint=None, work_type="task") -> bool:
     sprint = sprint or get_sprint(selected_commits)
     success = False
 
@@ -232,7 +232,7 @@ def submit_task(title, description, selected_commits, labels, date_iso,
                 page.goto(NEXUS_BOARD_URL)
             page.get_by_role("button", name="Create").first.wait_for(timeout=30000)
 
-            modal = fill_form(page, title, description, labels, date_iso, sprint)
+            modal = fill_form(page, title, description, labels, date_iso, sprint, work_type)
             page.wait_for_timeout(800)
 
             # Footer "Create" button (last one inside modal)

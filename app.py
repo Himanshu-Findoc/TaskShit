@@ -10,7 +10,7 @@ from config import (
 )
 from git_service import get_commits
 from helpers import sort_commits
-from ai_service import generate_ai_task, generate_meeting_task
+from ai_service import generate_ai_task, generate_meeting_task, generate_manual_task
 from nexus_service import submit_task
 from sprintsheet_service import submit_sprintsheet
 
@@ -115,12 +115,12 @@ def main():
 
     while True:
         category = ask_category()
-        prefix, repo_filter = CATEGORIES[category]
+        prefix, repo_filter, work_type = CATEGORIES[category]
         selected = []
 
-        if repo_filter is None:  # Meeting
+        if repo_filter is None:  # Meeting / Manual: no commits, user types agenda
             agenda = questionary.text(
-                "Meeting agenda (Esc+Enter to finish):", multiline=True, style=QSTYLE,
+                f"{'Meeting agenda' if category == 'Meeting' else 'Task agenda'} (Esc+Enter to finish):", multiline=True, style=QSTYLE,
             ).ask() or ""
             if not agenda.strip():
                 console.print("[yellow]⚠ Agenda is empty.[/yellow]")
@@ -156,7 +156,7 @@ def main():
             to_sheet = "Sprint" in targets
             if to_sheet:
                 hours = ask_hours(
-                    "Meeting duration in hours (e.g. 0.5):" if not selected
+                    "Meeting duration in hours (e.g. 0.5):" if category == "Meeting"
                     else "Estimated hours (e.g. 2.25):"
                 )
                 start_time = ask_time()
@@ -164,13 +164,16 @@ def main():
             console.print("[magenta]🤖 Generating title & description...[/magenta]")
             if selected:
                 title, description = generate_ai_task(selected)
-            else:
+            elif category == "Meeting":
                 title, description = generate_meeting_task(agenda)
+            else:
+                title, description = generate_manual_task(agenda)
 
             title = questionary.text(
-                f"Summary ({prefix} is added automatically):", default=title, style=QSTYLE,
+                f"Summary ({prefix} is added automatically):" if prefix else "Summary:",
+                default=title, style=QSTYLE,
             ).ask().strip()
-            title = f"{prefix} {title}"[:150]
+            title = (f"{prefix} {title}" if prefix else title)[:150]
             console.print(Panel(description, title="Description", border_style="green"))
             if questionary.confirm("Edit description?", default=False, style=QSTYLE).ask():
                 description = questionary.text(
@@ -180,12 +183,12 @@ def main():
 
             console.print(
                 f"Summary: [bold]{title}[/bold]\n"
-                f"Sprint: [bold]{sprint}[/bold] | Labels: {labels or '-'} | Date: {date_iso}"
+                f"Work type: [bold]{work_type}[/bold] | Sprint: [bold]{sprint}[/bold] | Labels: {labels or '-'} | Date: {date_iso}"
             )
             if questionary.confirm(f"Upload to {targets}?", default=True, style=QSTYLE).ask():
                 if to_nexus:
                     console.print("[cyan]→ Nexus...[/cyan]")
-                    ok = submit_task(title, description, selected, labels, date_iso, sprint)
+                    ok = submit_task(title, description, selected, labels, date_iso, sprint, work_type)
                     console.print("[bold green]✅ Nexus done[/bold green]" if ok
                                   else "[bold red]❌ Nexus failed[/bold red]")
                 if to_sheet:

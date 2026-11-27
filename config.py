@@ -25,18 +25,19 @@ PROJECT_SPRINT_MAP = {
 }
 
 # Fixed form values
-WORK_TYPE = "task"
 STATUS    = "Done"   # matched by visible label
 PRIORITY  = "medium"
 ASSIGNEE  = "Himanshu Swami"
 REPORTER  = "Vishal Yadav"
 
-# Task category -> (summary prefix, repo-name filter)
+# Task category -> (summary prefix, repo-name filter, Nexus work type)
+# repo filter None = no commits; the user types an agenda instead
 CATEGORIES = {
-    "Meeting":     ("Meeting-",     None),
-    "Web Dev":     ("Web Dev-",     lambda r: r.endswith("_r_fe")),
-    "App Dev":     ("App Dev-",     lambda r: r.endswith("_fe") and not r.endswith("_r_fe")),
-    "Backend Dev": ("Backend Dev-", lambda r: r.endswith("_be")),
+    "Meeting":     ("Meeting-",     None, "task"),
+    "Web Dev":     ("Web Dev-",     lambda r: r.endswith("_r_fe"), "enhancement"),
+    "App Dev":     ("App Dev-",     lambda r: r.endswith("_fe") and not r.endswith("_r_fe"), "enhancement"),
+    "Backend Dev": ("Backend Dev-", lambda r: r.endswith("_be"), "enhancement"),
+    "Manual":      ("",             None, "task"),
 }
 
 LABEL_OPTIONS = ["feature", "bug", "improvement", "urgent", "documentation"]

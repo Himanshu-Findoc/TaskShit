@@ -71,6 +71,31 @@ Summary here.
     return _ask_ai(prompt, fallback=(agenda.splitlines()[0][:140], agenda))
 
 
+def generate_manual_task(agenda):
+    """Return (title, description) for a manually described task."""
+    prompt = f"""
+Create a professional task entry from the user's description of work done.
+
+Task agenda (from the user):
+{agenda}
+
+Rules:
+- Title: concise, captures the real theme/impact of the work, max 12 words, under 140 characters
+- Description: professional summary of the work and its goals
+- Suitable for managers and reporting, avoid excessive jargon
+- Plain text only, no markdown
+
+Output format:
+
+Title:
+Something
+
+Description:
+Summary here.
+"""
+    return _ask_ai(prompt, fallback=(agenda.splitlines()[0][:140], agenda))
+
+
 def _ask_ai(prompt, fallback):
     try:
         response = client.chat.completions.create(
